@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">FYP_Mobile</string>
+    <string name="app_login">Login</string>
+    <string name="app_register">Register</string>
+    <string name="app_email">Email</string>
+    <string name="app_password">Password</string>
+    <string name="app_forgot">Forgot Password?</string>
+</resources>
