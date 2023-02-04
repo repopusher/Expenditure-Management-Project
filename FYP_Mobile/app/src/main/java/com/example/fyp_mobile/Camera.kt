@@ -59,6 +59,7 @@ class Camera : AppCompatActivity() {
         }
     }
 
+    //Test
     @SuppressLint("MissingPermission")
     fun openCamera(textureView: TextureView){
         cameraManager.openCamera(cameraManager.cameraIdList[0], @SuppressLint("MissingPermission")
