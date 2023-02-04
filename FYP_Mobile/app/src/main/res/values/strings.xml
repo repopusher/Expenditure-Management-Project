@@ -5,4 +5,5 @@
     <string name="app_email">Email</string>
     <string name="app_password">Password</string>
     <string name="app_forgot">Forgot Password?</string>
+    <string name="app_capture">Capture</string>
 </resources>
