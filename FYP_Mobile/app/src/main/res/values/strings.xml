@@ -8,4 +8,5 @@
     <string name="app_capture">Capture</string>
     <string name="app_receipt">Capture a receipt image.</string>
     <string name="app_confirm">Confirm</string>
+    <string name="image_taken_by_camera">Image taken by camera</string>
 </resources>

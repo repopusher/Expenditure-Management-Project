@@ -5,6 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".Camera">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:src="@drawable/ic_launcher_background"
+        android:contentDescription="@string/androidx_startup" />
+
     <ScrollView
         android:id="@+id/containerScrollView"
         android:layout_width="match_parent"
@@ -21,6 +29,9 @@
             android:id="@+id/textView"
             android:text="@string/app_receipt" />
 
+
+
+
     </ScrollView>
 
     <LinearLayout
@@ -28,6 +39,8 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+
         <Button
             android:id="@+id/captureButton"
             android:text="@string/app_capture"

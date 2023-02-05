@@ -3,16 +3,22 @@ package com.example.fyp_mobile
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.MediaStore.Images
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import java.io.ByteArrayOutputStream
+
 
 @Suppress("DEPRECATION")
 class Camera : AppCompatActivity() {
@@ -20,6 +26,7 @@ class Camera : AppCompatActivity() {
     private lateinit var captureButton: Button
     private lateinit var confirmButton: Button
     private lateinit var resultTextView: TextView
+    private lateinit var imageView: ImageView
     private val REQUEST_IMAGE_CAPTURE = 101
 
     @SuppressLint("MissingInflatedId")
@@ -30,6 +37,7 @@ class Camera : AppCompatActivity() {
         captureButton = findViewById(R.id.captureButton)
         confirmButton = findViewById(R.id.confirmButton)
         resultTextView = findViewById(R.id.textView)
+        imageView = findViewById(R.id.imageView)
 
 
         getPermissions()
@@ -46,7 +54,13 @@ class Camera : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 101){
             //Image captured in BitMap format
-            var pic = data?.getParcelableExtra<Bitmap>("data")
+            val photo = data?.getParcelableExtra<Bitmap>("data")
+
+            imageView.setImageBitmap(photo)
+
+            val tempUri = getImageUri(applicationContext, photo!!)
+
+            Toast.makeText(this, tempUri.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -65,6 +79,13 @@ class Camera : AppCompatActivity() {
         } catch (e: ActivityNotFoundException) {
             Toast.makeText(this, "An error occurred, please try again", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path = Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null)
+        return Uri.parse(path)
     }
 
 }
