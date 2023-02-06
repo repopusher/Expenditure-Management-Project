@@ -17,7 +17,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.yalantis.ucrop.UCrop
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 
 @Suppress("DEPRECATION")
@@ -28,6 +30,9 @@ class Camera : AppCompatActivity() {
     private lateinit var resultTextView: TextView
     private lateinit var imageView: ImageView
     private val REQUEST_IMAGE_CAPTURE = 101
+    private var tempUri: Uri? = null
+    private lateinit var destinationUri: Uri
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,11 +63,28 @@ class Camera : AppCompatActivity() {
 
             imageView.setImageBitmap(photo)
 
-            val tempUri = getImageUri(applicationContext, photo!!)
+            tempUri = getImageUri(applicationContext, photo!!)
 
             Toast.makeText(this, tempUri.toString(), Toast.LENGTH_SHORT).show()
+
+            val otherTempUri = java.lang.StringBuilder(UUID.randomUUID().toString()).append(".jpg").toString()
+            destinationUri = Uri.parse(otherTempUri)
+
+            UCrop.of(tempUri!!, destinationUri)
+                .withAspectRatio(16F, 9F)
+                .withMaxResultSize(2000, 2000)
+                .start(this)
         }
     }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+//            val resultUri = UCrop.getOutput(data!!)
+//        } else if (resultCode == UCrop.RESULT_ERROR) {
+//            val cropError = UCrop.getError(data!!)
+//        }
+//    }
 
 
     private fun getPermissions(){
