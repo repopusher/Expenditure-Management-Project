@@ -6,12 +6,10 @@ import android.text.TextUtils
 import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import java.util.regex.Pattern
 
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else {
 //                    TODO AUTHENTICATE LOGIN WHEN DB CONNECTION IS IMPLEMENTED
-                    val intent = Intent(this, Camera::class.java)
+                    val intent = Intent(this, CameraActivity::class.java)
 //                    intent.putExtra("key", value)
                     startActivity(intent)
                 }
