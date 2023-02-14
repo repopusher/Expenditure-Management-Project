@@ -8,10 +8,11 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="350dp"
+        android:contentDescription="@string/androidx_startup"
         android:padding="12dp"
-        android:src="@drawable/ic_launcher_background"
-        android:contentDescription="@string/androidx_startup" />
+        android:layout_centerInParent="true"
+        android:src="@drawable/reciept" />
 
     <ScrollView
         android:id="@+id/containerScrollView"
@@ -26,6 +27,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="21sp"
+            android:layout_marginTop="24dp"
             android:id="@+id/textView"
             android:text="@string/app_receipt" />
 

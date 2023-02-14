@@ -72,16 +72,14 @@ class CameraActivity : AppCompatActivity() {
             val intent = Intent(this, uCropActivity::class.java)
             intent.putExtra("tempUri", tempUri.toString())
             intent.putExtra("destinationUri", finalFile.toString())
-            startActivity(intent)
+            startActivityForResult(intent, 100)
         }
-        if (requestCode == 102) {
+        if (requestCode == 100 && resultCode == 102) {
             val croppedImageUri = data?.getStringExtra("CROP")
             var uri = data?.data
             uri = Uri.parse(croppedImageUri)
 
             Log.d("RESULT", "got to req code 102, " + uri.toString())
-
-
             imageView.setImageURI(uri)
         }
     }

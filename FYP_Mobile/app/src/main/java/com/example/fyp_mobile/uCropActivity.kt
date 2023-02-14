@@ -18,26 +18,15 @@ class uCropActivity : AppCompatActivity() {
         val intent = intent
         if (intent.extras != null) {
             val sourceUri = intent.getStringExtra("tempUri")
-            val destinationUri = intent.getStringExtra("destinationUri")
-
-            val otherTempUri = Uri.fromFile(File(destinationUri!!))
-
-            val destinationUriParse = Uri.parse(Uri.decode(destinationUri))
             val sourceUriParse = Uri.parse(Uri.decode(sourceUri))
-
-            Log.d("URIS", sourceUriParse.toString())
-            Log.d("URIS", destinationUriParse.toString())
 
             val newDestinationUri = File(filesDir, "croppedImage.jpg").toUri()
 
             UCrop.of(sourceUriParse, newDestinationUri)
-                .withAspectRatio(16F, 9F)
-                .withMaxResultSize(2000, 2000)
+                .withAspectRatio(9F, 16F)
+                .withMaxResultSize(2500, 5000)
                 .start(this)
-
         }
-
-
     }
 
     @Deprecated("Deprecated in Java")
@@ -49,7 +38,7 @@ class uCropActivity : AppCompatActivity() {
             Log.d("RESULT", resultUri.toString())
 
             val intent = Intent()
-            intent.putExtra("CROP", resultUri)
+            intent.putExtra("CROP", resultUri.toString())
             setResult(102, intent)
             finish()
 
