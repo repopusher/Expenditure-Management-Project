@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
@@ -33,8 +34,6 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private val REQUEST_IMAGE_CAPTURE = 101
     private var tempUri: Uri? = null
-    private lateinit var destinationUri: Uri
-
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +45,6 @@ class CameraActivity : AppCompatActivity() {
         resultTextView = findViewById(R.id.textView)
         imageView = findViewById(R.id.imageView)
 
-
         getPermissions()
 
         //Capture button listener dispatches camera intent
@@ -54,6 +52,15 @@ class CameraActivity : AppCompatActivity() {
             dispatchTakePictureIntent()
         }
 
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        super.onBackPressed()
+        FirebaseAuth.getInstance().signOut()
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     @Deprecated("Deprecated in Java")
