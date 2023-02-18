@@ -20,6 +20,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
@@ -34,6 +37,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private val REQUEST_IMAGE_CAPTURE = 101
     private var tempUri: Uri? = null
+    private lateinit var database: DatabaseReference
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +54,15 @@ class CameraActivity : AppCompatActivity() {
         //Capture button listener dispatches camera intent
         captureButton.setOnClickListener {
             dispatchTakePictureIntent()
+        }
+
+        confirmButton.setOnClickListener {
+            database = Firebase.database("https://expenditure-management-aaab6-default-rtdb.europe-west1.firebasedatabase.app").reference
+
+            FirebaseAuth.getInstance().currentUser?.let { it1 ->
+                database.child("receipts").child(
+                    it1.uid).setValue("test key", "test value")
+            }
         }
 
     }
