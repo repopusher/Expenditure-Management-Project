@@ -6,13 +6,15 @@ import { auth, registerWithEmailAndPassword } from '../config/firebase';
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, loading, error] = useAuthState(auth);
+  const [name, setName] = useState("");
+  //Error varble if you need it in brackets
+  const [user, loading] = useAuthState(auth);
 
   const navigate = useNavigate();
 
   const register = () => {
-    if (!email) alert("Please enter email");
-    registerWithEmailAndPassword(email, password);
+    if (!name) alert("Please enter name");
+    registerWithEmailAndPassword(name, email, password);
   };
   
   useEffect(() => {
@@ -29,6 +31,14 @@ function Register() {
   return (
     <div className="register">
       <div className="register__container">
+
+        <input
+          type="text"
+          className="register__textBox"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name"
+        />
 
         <input
           type="text"
