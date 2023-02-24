@@ -3,6 +3,7 @@ package com.example.fyp_mobile
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,6 +23,7 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -37,6 +39,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
     private val REQUEST_IMAGE_CAPTURE = 101
     private var tempUri: Uri? = null
+    private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
     @SuppressLint("MissingInflatedId")
@@ -48,6 +51,7 @@ class CameraActivity : AppCompatActivity() {
         confirmButton = findViewById(R.id.confirmButton)
         resultTextView = findViewById(R.id.textView)
         imageView = findViewById(R.id.imageView)
+        auth = FirebaseAuth.getInstance()
 
         getPermissions()
 
@@ -57,12 +61,26 @@ class CameraActivity : AppCompatActivity() {
         }
 
         confirmButton.setOnClickListener {
-            database = Firebase.database("https://expenditure-management-aaab6-default-rtdb.europe-west1.firebasedatabase.app").reference
+            val uid: String = auth.currentUser?.uid.toString()
+            val db = Firebase.firestore
 
-            FirebaseAuth.getInstance().currentUser?.let { it1 ->
-                database.child("receipts").child(
-                    it1.uid).setValue("test key", "test value")
-            }
+            //Helper class for receipt will go here eventually.
+            val receipt = hashMapOf(
+                "total" to "14.00",
+                "date" to "24/02/2023",
+                "item" to "Various shopping items here"
+            )
+
+            // Add a new document with a generated ID
+            db.collection("receipts")
+                .document(uid)
+                .set(receipt)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot added with ID: $documentReference")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error adding document", e)
+                }
         }
 
     }
