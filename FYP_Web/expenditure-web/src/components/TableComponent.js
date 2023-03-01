@@ -33,12 +33,14 @@ function TableComponent() {
 
   return (
     <div className={classes.root}>
+
       <Tabs value={value} onChange={handleChange} centered>
         <Tab label="Groceries" />
         <Tab label="Utilities" />
         <Tab label="Transport" />
         <Tab label="Other" />
       </Tabs>
+      
       <TableContainer component={Paper} className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -63,6 +65,7 @@ function TableComponent() {
           </TableBody>
         </Table>
       </TableContainer>
+      test
     </div>
   );
 }
