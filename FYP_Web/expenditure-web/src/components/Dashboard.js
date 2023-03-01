@@ -3,6 +3,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, db, logout } from "../config/firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
+import TableComponent from "./TableComponent";
 
 function Dashboard() {
   //Error variable if you need it in [user, loading, error]
@@ -56,7 +57,9 @@ function Dashboard() {
   return (
     <div className="dashboard">
        <div className="dashboard__container">
-        Logged in as
+
+          <p>Logged in as </p>
+          <TableComponent/>
          <div>{name}</div>
          <div>{user?.email}</div>
          <button className="dashboard__btn" onClick={logout}>
