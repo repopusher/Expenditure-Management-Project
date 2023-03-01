@@ -9,7 +9,15 @@ const useStyles = makeStyles({
   },
   container: {
     maxHeight: 440,
-    maxWidth: 700,
+    maxWidth: 600,
+  },
+  tabs: {
+    width: 600,
+    paddingLeft: 0,
+    paddingRight: 0,
+    '& .MuiTab-root': {
+      width: '25%',
+    },
   },
 });
 
@@ -33,14 +41,12 @@ function TableComponent() {
 
   return (
     <div className={classes.root}>
-
-      <Tabs value={value} onChange={handleChange} centered>
+      <Tabs value={value} onChange={handleChange} centered className={classes.tabs}>
         <Tab label="Groceries" />
         <Tab label="Utilities" />
         <Tab label="Transport" />
         <Tab label="Other" />
       </Tabs>
-      
       <TableContainer component={Paper} className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -68,9 +74,5 @@ function TableComponent() {
     </div>
   );
 }
-
-TableComponent.propTypes = {
-  children: PropTypes.node,
-};
 
 export default TableComponent;
