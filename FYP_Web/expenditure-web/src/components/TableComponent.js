@@ -65,7 +65,6 @@ function TableComponent() {
           </TableBody>
         </Table>
       </TableContainer>
-      test
     </div>
   );
 }
