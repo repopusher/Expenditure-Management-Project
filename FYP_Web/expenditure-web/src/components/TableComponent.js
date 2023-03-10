@@ -27,6 +27,7 @@ function TableComponent(props) {
   const [value, setValue] = useState(0);
   const { receipts } = props;
 
+
   const getCategoryTabIndex = (category) => {
     switch (category) {
       case "groceries":

@@ -45,6 +45,8 @@ function Dashboard() {
       const q = query(collectionReceiptReference, where("uid", "==", user?.uid));
       const doc = await getDocs(q);
       const data = doc.docs.map((doc) => mapReceiptData(doc.data()));
+
+      console.log(data);
       return data;
     } catch (err) {
       console.error(err);
