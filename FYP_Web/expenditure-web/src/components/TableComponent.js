@@ -61,11 +61,12 @@ function TableComponent(props) {
                   <TableCell align="right">Date</TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
                 {receipts.map((receipt) => {
                   if (getCategoryTabIndex(receipt.category) !== index) return null;
                   return receipt.items.map((item, index) => (
-                    <TableRow key={index}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={index} onClick={(event) => props.onRowClick(event, {receipt, index})}>
                       <TableCell component="th" scope="row">
                         {item}
                       </TableCell>
@@ -76,6 +77,7 @@ function TableComponent(props) {
                   ));
                 })}
               </TableBody>
+              
             </Table>
           </TableContainer>
         </TabPanel>
