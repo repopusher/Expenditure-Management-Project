@@ -6,6 +6,7 @@ import { query, collection, getDocs, where } from "firebase/firestore";
 import TableComponent from "./TableComponent";
 import ReceiptEntryForm from "./ReceiptEntryForm";
 
+
 function Dashboard() {
   const [user, loading] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -31,6 +32,7 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
+    //A function that fetches user and receipt data from firestore and sets it to state. The receipt data has a listener attached to it so that it updates in real time.  
     async function fetchUserData() {
       try {
         if (!user) return navigate('/', {replace: true});
