@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail} from "firebase/auth";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, updateDoc, doc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB0jRLin-Iu-72v2hDIPPdtyAvgOJ_TWQo",
@@ -43,6 +43,17 @@ const registerWithEmailAndPassword = async (name, email, password) => {
   }
 };
 
+//find a receipt by id and update it
+const updateReceipt = async (receipt) => {
+  try {
+    const receiptRef = doc(db, "receipts", receipt.id);
+    await updateDoc(receiptRef, receipt);
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+};
+
 const sendPasswordReset = async (email) => {
   try {
     await sendPasswordResetEmail(auth, email);
@@ -64,4 +75,5 @@ export {
   registerWithEmailAndPassword,
   sendPasswordReset,
   logout,
+  updateReceipt,
 };
