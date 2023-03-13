@@ -45,6 +45,22 @@ function ReceiptEntryForm(props) {
     document.getElementById("total").value = "";
   };
 
+  
+  const handleDelete = () => {
+    const receipt = rowData.receipt;
+    const index = rowData.index;
+
+    if (window.confirm("Are you sure you want to delete this entry?")) {
+      receipt.items.splice(index, 1);
+      receipt.quantities.splice(index, 1);
+      receipt.totals.splice(index, 1);
+
+      updateReceipt(receipt).then(() => {
+        clearFields();
+      });
+    }
+  };
+
   const handleUpdate = () => {
     const item = document.getElementById("item").value;
     const quantity = document.getElementById("quantity").value;
@@ -65,10 +81,6 @@ function ReceiptEntryForm(props) {
       receipt.quantities[rowData.index] = parseInt(quantity);
     }
 
-    /* check if total is empty, if not, check if it is numeric, if not, alert the user and clear the text fields 
-    the total varible can be either an integer or a float, so we use parseFloat() to convert it to a float
-    it is then stored in the receipt object as a float is rounded to 2 decimal places
-    */
     if (total !== "") {
       if (isNaN(total)) {
         alert("Total must be a number");
@@ -79,7 +91,6 @@ function ReceiptEntryForm(props) {
       receipt.totals[rowData.index] = parseFloat(total).toFixed(2);
     }
 
-    // update the receipt in the database then clear the text fields when it is finished updating
     updateReceipt(receipt).then(() => {
       clearFields();
     });
@@ -117,7 +128,7 @@ function ReceiptEntryForm(props) {
         <Button variant="contained" color="primary" className={classes.updateButton} onClick={handleUpdate}>
           Update
         </Button>
-        <Button variant="contained" color="secondary">
+        <Button variant="contained" color="secondary" onClick={handleDelete}>
           Delete
         </Button>
       </div>
