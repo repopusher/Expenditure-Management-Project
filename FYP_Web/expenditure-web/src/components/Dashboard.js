@@ -5,6 +5,7 @@ import { auth, db, logout } from "../config/firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import TableComponent from "./Table";
 import ReceiptEntryForm from "./Form";
+import BarChartComponent from "./BarChart";
 
 
 function Dashboard() {
@@ -92,6 +93,7 @@ function Dashboard() {
         <TableComponent receipts={receipts} onRowClick={handleRowClick} />
         {Object.keys(rowData).length !== 0 && <ReceiptEntryForm rowData={rowData} />}
       </div>
+      <BarChartComponent/>
     </div>
   </div>
   );
