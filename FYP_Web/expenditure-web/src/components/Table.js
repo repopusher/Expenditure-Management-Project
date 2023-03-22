@@ -5,14 +5,20 @@ import { Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead, Tabl
 
 const useStyles = makeStyles({
   root: {
-    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    padding: '16px',
+    maxWidth: '700px',
+    maxHeight: '500px',
+    marginTop: '60px',
+    margin: 'auto',
   },
   container: {
-    maxHeight: 440,
-    maxWidth: 600,
+    maxHeight: 400,
+    maxWidth: 700,
   },
   tabs: {
-    width: 600,
+    width: 700,
     paddingLeft: 0,
     paddingRight: 0,
     '& .MuiTab-root': {

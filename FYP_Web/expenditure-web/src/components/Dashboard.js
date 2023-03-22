@@ -3,8 +3,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
 import { auth, db, logout } from "../config/firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
-import TableComponent from "./TableComponent";
-import ReceiptEntryForm from "./ReceiptEntryForm";
+import TableComponent from "./Table";
+import ReceiptEntryForm from "./Form";
 
 
 function Dashboard() {
@@ -12,6 +12,21 @@ function Dashboard() {
   const [name, setName] = useState("");
   const [receipts, setReceipts] = useState([]);
   const [rowData , setRowData] = useState({});
+
+  const userStyles = () => ({
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#f5f5f5',
+    padding: '20px',
+  });
+
+  const tableContainerStyles = () => ({
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  });
 
   const navigate = useNavigate();
 
@@ -62,18 +77,23 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <div className="dashboard__container">
-        <p>Logged in as </p>
-        <TableComponent receipts={receipts} onRowClick={handleRowClick} />
-        {Object.keys(rowData).length !== 0 && <ReceiptEntryForm rowData={rowData} />}
-
-        <div>{name}</div>
-        <div>{user?.email}</div>
+    <div className="dashboard__container">
+      <div style={userStyles()}>
+        <div>
+          <p>Logged in as </p>
+          <div>{name}</div>
+          <div>{user?.email}</div>
+        </div>
         <button className="dashboard__btn" onClick={logout}>
           Logout
         </button>
       </div>
+      <div style={tableContainerStyles()}>
+        <TableComponent receipts={receipts} onRowClick={handleRowClick} />
+        {Object.keys(rowData).length !== 0 && <ReceiptEntryForm rowData={rowData} />}
+      </div>
     </div>
+  </div>
   );
 }
 

@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField, Button, Typography } from '@material-ui/core';
+import { TextField, Button, Typography, AppBar, Toolbar } from '@material-ui/core';
 import { updateReceipt } from '../config/firebase';
 
 const useStyles = makeStyles({
   form: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: '16px',
     maxWidth: '600px',
     margin: 'auto',
+    marginTop: '60px',
+    maxHeight: '500px',
   },
   input: {
     margin: '8px',
-    width: '100%',
+    width: '600px',
   },
   buttons: {
     display: 'flex',
