@@ -6,6 +6,7 @@ import { query, collection, getDocs, where } from "firebase/firestore";
 import TableComponent from "./Table";
 import ReceiptEntryForm from "./Form";
 import BarChartComponent from "./BarChart";
+import { AppBar, Toolbar } from "@material-ui/core";
 
 
 function Dashboard() {
@@ -48,7 +49,6 @@ function Dashboard() {
   }, []);
 
   useEffect(() => {
-    //A function that fetches user and receipt data from firestore and sets it to state. The receipt data has a listener attached to it so that it updates in real time.  
     async function fetchUserData() {
       try {
         if (!user) return navigate('/', {replace: true});
@@ -78,24 +78,25 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-    <div className="dashboard__container">
-      <div style={userStyles()}>
-        <div>
-          <p>Logged in as </p>
-          <div>{name}</div>
-          <div>{user?.email}</div>
+      <AppBar position="static">
+        <Toolbar>
+          <div>
+            <p>Welcome {name}</p>
+            <div>{user?.email}</div>
+          </div>
+          <button className="dashboard__btn" onClick={logout}>
+            Logout
+          </button>
+        </Toolbar>
+      </AppBar>
+      <div className="dashboard__container">
+        <div style={tableContainerStyles()}>
+          <TableComponent receipts={receipts} onRowClick={handleRowClick} />
+          {Object.keys(rowData).length !== 0 && <ReceiptEntryForm rowData={rowData} />}
         </div>
-        <button className="dashboard__btn" onClick={logout}>
-          Logout
-        </button>
+        <BarChartComponent receipts={receipts} />
       </div>
-      <div style={tableContainerStyles()}>
-        <TableComponent receipts={receipts} onRowClick={handleRowClick} />
-        {Object.keys(rowData).length !== 0 && <ReceiptEntryForm rowData={rowData} />}
-      </div>
-      <BarChartComponent/>
     </div>
-  </div>
   );
 }
 

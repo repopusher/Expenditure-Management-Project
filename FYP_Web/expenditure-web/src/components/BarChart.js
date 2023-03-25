@@ -1,38 +1,58 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+import React, { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 
-const data = [
-  { month: 'Jan', spend: 500 },
-  { month: 'Feb', spend: 600 },
-  { month: 'Mar', spend: 700 },
-  { month: 'Apr', spend: 800 },
-  { month: 'May', spend: 900 },
-  { month: 'Jun', spend: 1000 },
-  { month: 'Jul', spend: 1100 },
-  { month: 'Aug', spend: 1200 },
-  { month: 'Sep', spend: 1300 },
-  { month: 'Oct', spend: 1400 },
-  { month: 'Nov', spend: 1500 },
-  { month: 'Dec', spend: 1600 }
-];
+const BarCart = ({ receipt }) => {
+  const [selectedYear, setSelectedYear] = useState("All");
 
-const BarChartComponent = () => {
-  const [year, setYear] = useState('2021');
-  const filteredData = data.filter((item) => item.month <= year);
+  // Generate mock data for the BarChart
+  const data = [
+    { month: "Jan", total: 1500, year: 2022 },
+    { month: "Feb", total: 2500, year: 2022 },
+    { month: "Mar", total: 1800, year: 2022 },
+    { month: "Apr", total: 2800, year: 2022 },
+    { month: "May", total: 2000, year: 2022 },
+    { month: "Jun", total: 1500, year: 2022 },
+    { month: "Jul", total: 2800, year: 2022 },
+    { month: "Aug", total: 1800, year: 2022 },
+    { month: "Sep", total: 2200, year: 2022 },
+    { month: "Oct", total: 2800, year: 2022 },
+    { month: "Nov", total: 2000, year: 2022 },
+    { month: "Dec", total: 2500, year: 2022 },
+    { month: "Jan", total: 1000, year: 2023 },
+    { month: "Feb", total: 1500, year: 2023 },
+    { month: "Mar", total: 2000, year: 2023 },
+  ];
 
-  const handleYearChange = (event) => {
-    setYear(event.target.value);
-  };
+  // Filter data based on selected year
+  const filteredData = data.filter((item) => {
+    if (selectedYear === "All") {
+      return true;
+    } else {
+      return item.year === selectedYear;
+    }
+  });
+
+
+  const yearOptions = [...new Set(data.map((item) => item.year))].map((year) => (
+    <MenuItem key={year} value={year}>
+      {year}
+    </MenuItem>
+  ));
+
 
   return (
     <div>
-      <FormControl>
-        <InputLabel>Year</InputLabel>
-        <Select value={year} onChange={handleYearChange}>
-          <MenuItem value="2021">2021</MenuItem>
-          <MenuItem value="2022">2022</MenuItem>
-          <MenuItem value="2023">2023</MenuItem>
+      <FormControl variant="outlined" fullWidth>
+        <InputLabel id="year-selector-label">Year</InputLabel>
+        <Select
+          labelId="year-selector-label"
+          id="year-selector"
+          value={selectedYear}
+          onChange={(event) => setSelectedYear(event.target.value)}
+          label="Year"
+        >
+          {yearOptions}
         </Select>
       </FormControl>
       <BarChart width={600} height={300} data={filteredData}>
@@ -41,10 +61,10 @@ const BarChartComponent = () => {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar dataKey="spend" fill="#8884d8" />
+        <Bar dataKey="total" fill="#8884d8" />
       </BarChart>
     </div>
   );
 };
 
-export default BarChartComponent;
+export default BarCart;
