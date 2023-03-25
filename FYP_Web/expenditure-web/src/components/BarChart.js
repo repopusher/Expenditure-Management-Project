@@ -3,7 +3,6 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "rec
 import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 
 const BarCart = ({ receipt }) => {
-  const currentYear = new Date().getFullYear(); // get the current year
   const [selectedYear, setSelectedYear] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
@@ -44,7 +43,8 @@ const BarCart = ({ receipt }) => {
   return (
     <div style={{ margin: "10px", padding: "10px", display: "flex", flexDirection: "column", alignItems: "center"}}>
       <FormControl variant="outlined" fullWidth style={{ marginBottom: "20px" }}>
-        <InputLabel shrink={true} id="year-selector-label">Year</InputLabel>
+        <InputLabel id="year-selector-label">Select year to view BarChart
+</InputLabel>
         <Select
           labelId="year-selector-label"
           id="year-selector"
@@ -53,9 +53,7 @@ const BarCart = ({ receipt }) => {
           onChange={(event) => setSelectedYear(event.target.value)}
           label="Year"
         >
-          <MenuItem value="">
-            Select year to view BarChart
-          </MenuItem>
+
           {yearOptions}
         </Select>
       </FormControl>
