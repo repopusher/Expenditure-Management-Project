@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
 import { FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 
 const BarCart = ({ receipt }) => {
-  const [selectedYear, setSelectedYear] = useState("All");
+  const currentYear = new Date().getFullYear(); // get the current year
+  const [selectedYear, setSelectedYear] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
-  // Generate mock data for the BarChart
-  const data = [
+  const data = useMemo(() => [
     { month: "Jan", total: 1500, year: 2022 },
     { month: "Feb", total: 2500, year: 2022 },
     { month: "Mar", total: 1800, year: 2022 },
@@ -22,46 +23,57 @@ const BarCart = ({ receipt }) => {
     { month: "Jan", total: 1000, year: 2023 },
     { month: "Feb", total: 1500, year: 2023 },
     { month: "Mar", total: 2000, year: 2023 },
-  ];
+  ], []);
 
-  // Filter data based on selected year
-  const filteredData = data.filter((item) => {
+  useEffect(() => {
+    const filtered = data.filter((item) => {
       return item.year === selectedYear;
-  });
+    });
+    setFilteredData(filtered);
+  }, [selectedYear, data]);
 
+  const yearOptions = useMemo(() => {
+    return [
+      ...new Set(data.map((item) => item.year))].map((year) => (
+      <MenuItem key={year} value={year}>
+        {year}
+      </MenuItem>
+    ));
+  }, [data]);
 
-  const yearOptions = [...new Set(data.map((item) => item.year))].map((year) => (
-    <MenuItem key={year} value={year}>
-      {year}
-    </MenuItem>
-  ));
-
-
-   return (
+  return (
     <div style={{ margin: "10px", padding: "10px", display: "flex", flexDirection: "column", alignItems: "center"}}>
-
       <FormControl variant="outlined" fullWidth style={{ marginBottom: "20px" }}>
-        <InputLabel id="year-selector-label">Year</InputLabel>
+        <InputLabel shrink={true} id="year-selector-label">Year</InputLabel>
         <Select
           labelId="year-selector-label"
           id="year-selector"
+          displayEmpty
           value={selectedYear}
           onChange={(event) => setSelectedYear(event.target.value)}
           label="Year"
         >
+          <MenuItem value="">
+            Select year to view BarChart
+          </MenuItem>
           {yearOptions}
         </Select>
       </FormControl>
 
-      <BarChart width={window.innerWidth - 100} height={500} data={filteredData}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="total" fill="#8884d8" />
-      </BarChart>
+      {filteredData.length === 0 && selectedYear !== "" ? (
+        <p>No data available for the selected year.</p>
+      ) : (
+        <BarChart width={window.innerWidth - 100} height={500} data={filteredData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="total" fill="#8884d8" />
+        </BarChart>
+      )}
     </div>
   );
 };
+
 export default BarCart;
