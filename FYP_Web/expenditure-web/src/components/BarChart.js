@@ -26,11 +26,7 @@ const BarCart = ({ receipt }) => {
 
   // Filter data based on selected year
   const filteredData = data.filter((item) => {
-    if (selectedYear === "All") {
-      return true;
-    } else {
       return item.year === selectedYear;
-    }
   });
 
 
@@ -41,9 +37,10 @@ const BarCart = ({ receipt }) => {
   ));
 
 
-  return (
-    <div>
-      <FormControl variant="outlined" fullWidth>
+   return (
+    <div style={{ margin: "10px", padding: "10px", display: "flex", flexDirection: "column", alignItems: "center"}}>
+
+      <FormControl variant="outlined" fullWidth style={{ marginBottom: "20px" }}>
         <InputLabel id="year-selector-label">Year</InputLabel>
         <Select
           labelId="year-selector-label"
@@ -55,7 +52,8 @@ const BarCart = ({ receipt }) => {
           {yearOptions}
         </Select>
       </FormControl>
-      <BarChart width={600} height={300} data={filteredData}>
+
+      <BarChart width={window.innerWidth - 100} height={500} data={filteredData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="month" />
         <YAxis />
@@ -66,5 +64,4 @@ const BarCart = ({ receipt }) => {
     </div>
   );
 };
-
 export default BarCart;
