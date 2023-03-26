@@ -4,45 +4,47 @@ import { useNavigate } from "react-router-dom";
 import { auth, db, logout } from "../config/firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import TableComponent from "./Table";
-import ReceiptEntryForm from "./Form";
+import Form from "./Form";
 import BarChartComponent from "./BarChart";
 import { AppBar, Toolbar } from "@material-ui/core";
-
 
 function Dashboard() {
   const [user, loading] = useAuthState(auth);
   const [name, setName] = useState("");
   const [receipts, setReceipts] = useState([]);
-  const [rowData , setRowData] = useState({});
+  const [rowData, setRowData] = useState({});
 
   const userStyles = () => ({
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#f5f5f5',
-    padding: '20px',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#f5f5f5",
+    padding: "20px",
   });
 
   const tableContainerStyles = () => ({
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   });
 
   const navigate = useNavigate();
 
-  const mapReceiptData = useMemo(() => (data) => {
-    return {
-      id: data.id,
-      uid: data.uid,
-      category: data.category,
-      date: data.date,
-      items: data.items,
-      quantities: data.quantities,
-      totals: data.totals
-    };
-  }, []);
+  const mapReceiptData = useMemo(
+    () => (data) => {
+      return {
+        id: data.id,
+        uid: data.uid,
+        category: data.category,
+        date: data.date,
+        items: data.items,
+        quantities: data.quantities,
+        totals: data.totals,
+      };
+    },
+    []
+  );
 
   const handleRowClick = useCallback((event, rowData) => {
     setRowData(rowData);
@@ -51,7 +53,7 @@ function Dashboard() {
   useEffect(() => {
     async function fetchUserData() {
       try {
-        if (!user) return navigate('/', {replace: true});
+        if (!user) return navigate("/", { replace: true });
 
         const qName = query(collection(db, "users"), where("uid", "==", user?.uid));
         const qReceipts = query(collection(db, "receipts"), where("uid", "==", user?.uid));
@@ -62,9 +64,9 @@ function Dashboard() {
         setName(nameData.name);
 
         const receiptData = receiptsDoc.docs.map((doc) => {
-        const receipt = mapReceiptData(doc.data());
-        receipt.id = doc.id;
-        return receipt;
+          const receipt = mapReceiptData(doc.data());
+          receipt.id = doc.id;
+          return receipt;
         });
         setReceipts(receiptData);
       } catch (err) {
@@ -92,12 +94,13 @@ function Dashboard() {
       <div className="dashboard__container">
         <div style={tableContainerStyles()}>
           <TableComponent receipts={receipts} onRowClick={handleRowClick} />
-          {Object.keys(rowData).length !== 0 && <ReceiptEntryForm rowData={rowData} />}
+          {Object.keys(rowData).length !== 0 && <Form rowData={rowData} />}
         </div>
-        <BarChartComponent receipts={receipts} />
+        {receipts.length > 0 && <BarChartComponent receipts={receipts} />}
       </div>
     </div>
   );
+
 }
 
 export default Dashboard;

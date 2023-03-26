@@ -49,7 +49,7 @@ function Reset() {
   }, [user, loading, navigate]);
 
   return (
-    <Grid container justify="center" alignItems="center" style={{ minHeight: '100vh' }}>
+    <Grid container justifiedcontent="center" alignItems="center" style={{ minHeight: '100vh' }}>
       <Grid item xs={12} sm={8} md={6} lg={4}>
         <div className={classes.root}>
           <Typography component="h1" variant="h5">
@@ -75,7 +75,7 @@ function Reset() {
             >
               Send password reset email
             </Button>
-            <Grid container spacing={1} justify="flex-end">
+            <Grid container spacing={1} justifiedcontent="flex-end">
               <Grid item>
                 Don't have an account? <Link to="/register" variant="body2">Register</Link>
               </Grid>

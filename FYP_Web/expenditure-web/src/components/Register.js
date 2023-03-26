@@ -50,7 +50,7 @@ function Register() {
   }, [user, loading, navigate]);
 
   return (
-    <Grid container justify="center" alignItems="center" style={{ minHeight: '100vh' }}>
+    <Grid container justifiedcontent="center" alignItems="center" style={{ minHeight: '100vh' }}>
       <Grid item xs={12} sm={8} md={6} lg={4}>
         <div className={classes.root}>
           <Typography component="h1" variant="h5">
@@ -96,7 +96,7 @@ function Register() {
             >
               Register
             </Button>
-            <Grid container justify="flex-end">
+            <Grid container justifiedcontent="flex-end">
               <Grid item>
                 Already have an account? <Link to="/" variant="body2">Sign in</Link>
               </Grid>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField, Button, Typography, AppBar, Toolbar } from '@material-ui/core';
+import { TextField, Button, Typography } from '@material-ui/core';
 import { updateReceipt } from '../config/firebase';
 
 const useStyles = makeStyles({
@@ -57,8 +57,10 @@ function ReceiptEntryForm(props) {
 
       updateReceipt(receipt).then(() => {
         clearFields();
+        window.location.reload();
       });
     }
+
   };
 
   const handleUpdate = () => {
@@ -93,6 +95,7 @@ function ReceiptEntryForm(props) {
 
     updateReceipt(receipt).then(() => {
       clearFields();
+      window.location.reload();
     });
 
   };
