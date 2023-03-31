@@ -2,6 +2,7 @@ package com.example.fyp_mobile
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -25,8 +26,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 
@@ -41,6 +44,7 @@ class CameraActivity : AppCompatActivity() {
     private var tempUri: Uri? = null
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    private var uri: Uri? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,28 +65,42 @@ class CameraActivity : AppCompatActivity() {
         }
 
         confirmButton.setOnClickListener {
-            val uid: String = auth.currentUser?.uid.toString()
-            val db = Firebase.firestore
-
-            //Helper class for receipt will go here eventually.
-            val receipt = hashMapOf(
-                "total" to "14.00",
-                "date" to "24/02/2023",
-                "item" to "Various shopping items here"
-            )
-
-            // Add a new document with a generated ID
-            db.collection("receipts")
-                .document(uid)
-                .set(receipt)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: $documentReference")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
+            if (uri != null) {
+                uploadImage(uri!!)
+            } else {
+                Toast.makeText(this, "No image to upload", Toast.LENGTH_SHORT).show()
+            }
         }
 
+    }
+
+    private fun uploadImage(uri: Uri) {
+        val storage = Firebase.storage
+        val storageRef = storage.reference
+        val user = auth.currentUser
+        val imageRef = user?.let { storageRef.child("receipts/${it.uid}/${UUID.randomUUID()}.jpg") }
+        confirmButton.isEnabled = false
+
+        val uploadTask = imageRef?.putFile(uri)
+        uploadTask?.addOnSuccessListener {
+            Log.d(TAG, "Image uploaded successfully")
+            Toast.makeText(this, "Receipt Logged", Toast.LENGTH_SHORT).show()
+        }?.addOnFailureListener { exception ->
+            Log.e(TAG, "Failed to upload image", exception)
+            Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
+            confirmButton.isEnabled = true
+        }
+    }
+
+    fun deleteFileFromPath(path: String) {
+        val file = File(path)
+        if (file.exists()) {
+            if (file.delete()) {
+                Log.d("FileUtils", "File deleted successfully")
+            } else {
+                Log.e("FileUtils", "Failed to delete the file")
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -94,10 +112,12 @@ class CameraActivity : AppCompatActivity() {
         finish()
     }
 
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101){
+
+        if (resultCode == RESULT_OK && requestCode == 101) {
             //Image captured in BitMap format
             val photo = data?.getParcelableExtra<Bitmap>("data")
 
@@ -105,21 +125,42 @@ class CameraActivity : AppCompatActivity() {
 
             val finalFile = File(getRealPathFromURI(tempUri))
 
-            Log.println(Log.DEBUG,"debug", finalFile.toString())
+            Log.println(Log.DEBUG, "debug", finalFile.toString())
 
             val intent = Intent(this, uCropActivity::class.java)
             intent.putExtra("tempUri", tempUri.toString())
             intent.putExtra("destinationUri", finalFile.toString())
             startActivityForResult(intent, 100)
         }
-        if (requestCode == 100 && resultCode == 102) {
+        else if (requestCode == 100 && resultCode == 102) {
             val croppedImageUri = data?.getStringExtra("CROP")
-            var uri = data?.data
+            val originalImagePath = data?.getStringExtra("originalImagePath")
+
             uri = Uri.parse(croppedImageUri)
 
             Log.d("RESULT", "got to req code 102, " + uri.toString())
-            imageView.setImageURI(uri)
+            imageView.setImageURI(null) // Reset the image view
+            imageView.setImageURI(uri) // Set the new image
+            confirmButton.isEnabled = true // Enable the confirm buttom
+
+            // Delete the original image file here
+            if (originalImagePath != null) {
+                deleteFileFromPath(originalImagePath)
+            }
         }
+        else if (requestCode == 100 && resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(this, "No new image captured", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            if (imageView.drawable == null) {
+                // Set the default image
+                imageView.setImageResource(R.drawable.reciept)
+            } else {
+                // Keep the previous image in the imageView
+                Toast.makeText(this, "No new image captured", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
 
@@ -147,11 +188,15 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
-    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri? {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path = Images.Media.insertImage(inContext.contentResolver, inImage, "TestImage", null)
-        return Uri.parse(path)
+    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
+        val filesDir = inContext.filesDir
+        val imageFile = File(filesDir, "tempImage.jpg")
+
+        val outputStream = FileOutputStream(imageFile)
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        outputStream.close()
+
+        return Uri.fromFile(imageFile)
     }
 
     private fun getRealPathFromURI(uri: Uri?): String {
