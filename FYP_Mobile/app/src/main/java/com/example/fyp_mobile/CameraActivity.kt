@@ -85,6 +85,23 @@ class CameraActivity : AppCompatActivity() {
         uploadTask?.addOnSuccessListener {
             Log.d(TAG, "Image uploaded successfully")
             Toast.makeText(this, "Receipt Logged", Toast.LENGTH_SHORT).show()
+
+            // Add the image URL to Firestore
+            val imageURL = it.metadata?.reference?.downloadUrl?.addOnSuccessListener { downloadUri ->
+                val db = Firebase.firestore
+                val imagesToProcess = hashMapOf(
+                    "user_id" to user.uid,
+                    "image_path" to downloadUri.toString()
+                )
+                db.collection("images_to_process")
+                    .add(imagesToProcess)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
+            }
         }?.addOnFailureListener { exception ->
             Log.e(TAG, "Failed to upload image", exception)
             Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
