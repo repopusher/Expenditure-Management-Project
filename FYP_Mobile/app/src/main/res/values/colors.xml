@@ -7,4 +7,21 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="your_background_color">#FFFFFF</color>
+    <color name="your_text_color">#000000</color>
+    <color name="your_link_color">#2196F3</color>
+    <color name="your_button_text_color">#FFFFFF</color>
+
+    <color name="colorPrimary">#4CAF50</color>
+    <color name="colorPrimaryDark">#388E3C</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="background">#FFFFFF</color>
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
+    <color name="linkColor">#2196F3</color>
+    <color name="buttonTextColor">#FFFFFF</color>
+
+    <color name="gradient_start">#FF9800</color>
+    <color name="gradient_end">#FF5722</color>
+
 </resources>

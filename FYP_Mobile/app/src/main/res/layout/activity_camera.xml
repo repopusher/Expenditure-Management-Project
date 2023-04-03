@@ -1,68 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CameraActivity">
+    android:background="@color/background"
+    tools:context=".CameraActivity"
+    android:backgroundTint="@color/colorPrimaryDark">
+
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="350dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/androidx_startup"
-        android:padding="12dp"
-        android:layout_centerInParent="true"
-        android:src="@drawable/reciept" />
-
-    <ScrollView
-        android:id="@+id/containerScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/linearLayout"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="12dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="21sp"
-            android:layout_marginTop="24dp"
-            android:id="@+id/textView"
-            android:text="@string/app_receipt" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/captureButton"
+        app:layout_constraintVertical_bias="0.5"
+        android:src="@drawable/reciept"
+        android:scaleType="centerCrop" />
 
 
+    <Button
+        android:id="@+id/captureButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/app_capture"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/confirmButton"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/buttonTextColor" />
 
-
-    </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <Button
-            android:id="@+id/captureButton"
-            android:text="@string/app_capture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="8dp" />
-        <Button
-            android:id="@+id/confirmButton"
-            android:layout_weight="1"
-            android:text="@string/app_confirm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"/>
-
-    </LinearLayout>
-
-
-
-</RelativeLayout>
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/app_confirm"
+        app:layout_constraintStart_toEndOf="@id/captureButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/buttonTextColor" />
+</androidx.constraintlayout.widget.ConstraintLayout>

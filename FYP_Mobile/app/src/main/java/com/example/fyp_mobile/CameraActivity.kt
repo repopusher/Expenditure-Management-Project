@@ -59,7 +59,6 @@ class CameraActivity : AppCompatActivity() {
         // Requesting camera permissions for camera API
         captureButton = findViewById(R.id.captureButton)
         confirmButton = findViewById(R.id.confirmButton)
-        resultTextView = findViewById(R.id.textView)
         imageView = findViewById(R.id.imageView)
         auth = FirebaseAuth.getInstance()
 
