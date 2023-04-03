@@ -26,8 +26,8 @@ class uCropActivity : AppCompatActivity() {
             val newDestinationUri = File(filesDir, "croppedImage.jpg").toUri()
 
             UCrop.of(sourceUriParse, newDestinationUri)
-                .withAspectRatio(9F, 16F)
-                .withMaxResultSize(2500, 5000)
+                .withAspectRatio(0F, 0F)
+                .withMaxResultSize(4000, 8000)
                 .start(this)
         }
     }

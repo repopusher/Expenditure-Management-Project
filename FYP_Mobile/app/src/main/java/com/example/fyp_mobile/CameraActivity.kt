@@ -12,6 +12,7 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.Images
 import android.util.Log
@@ -21,16 +22,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import java.io.ByteArrayOutputStream
+import okhttp3.*
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.IOException
+import java.text.SimpleDateFormat
 
 
 @Suppress("DEPRECATION")
@@ -45,6 +50,7 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
     private var uri: Uri? = null
+    private lateinit var fullSizeImageUri: Uri
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +84,7 @@ class CameraActivity : AppCompatActivity() {
         val storage = Firebase.storage
         val storageRef = storage.reference
         val user = auth.currentUser
-        val imageRef = user?.let { storageRef.child("receipts/${it.uid}/${UUID.randomUUID()}.jpg") }
+        val imageRef = user?.let { storageRef.child("receipts/${it.uid}/${UUID.randomUUID()}.png") }
         confirmButton.isEnabled = false
 
         val uploadTask = imageRef?.putFile(uri)
@@ -87,16 +93,20 @@ class CameraActivity : AppCompatActivity() {
             Toast.makeText(this, "Receipt Logged", Toast.LENGTH_SHORT).show()
 
             // Add the image URL to Firestore
-            val imageURL = it.metadata?.reference?.downloadUrl?.addOnSuccessListener { downloadUri ->
+
+            val storagePath = it.metadata?.path
+
+            storagePath?.let { downloadUri ->
                 val db = Firebase.firestore
                 val imagesToProcess = hashMapOf(
                     "user_id" to user.uid,
-                    "image_path" to downloadUri.toString()
+                    "image_path" to imageRef.path
                 )
                 db.collection("images_to_process")
                     .add(imagesToProcess)
                     .addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                        sendImageToOCR(downloadUri.toString(), user.uid)
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error adding document", e)
@@ -107,6 +117,33 @@ class CameraActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
             confirmButton.isEnabled = true
         }
+    }
+
+    private fun sendImageToOCR(imagePath: String, userId: String) {
+        val client = OkHttpClient()
+
+        val json = "application/json; charset=utf-8".toMediaTypeOrNull()
+        val jsonString = "{\"image_path\": \"$imagePath\", \"user_id\": \"$userId\"}"
+        val requestBody = jsonString.toRequestBody(json)
+
+        val request = Request.Builder()
+            .url("https://6f2b-213-133-66-102.eu.ngrok.io/process_image") //Change every time you rehost on ngrok
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                runOnUiThread {
+                    Toast.makeText(this@CameraActivity, "Processing started.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@CameraActivity, "Failed to start processing.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
     }
 
     fun deleteFileFromPath(path: String) {
@@ -129,6 +166,20 @@ class CameraActivity : AppCompatActivity() {
         finish()
     }
 
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val imageFileName = "JPEG_${timeStamp}_"
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            imageFileName, /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            fullSizeImageUri = Uri.fromFile(this)
+        }
+    }
+
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -136,9 +187,7 @@ class CameraActivity : AppCompatActivity() {
 
         if (resultCode == RESULT_OK && requestCode == 101) {
             //Image captured in BitMap format
-            val photo = data?.getParcelableExtra<Bitmap>("data")
-
-            tempUri = getImageUri(applicationContext, photo!!)
+            tempUri = fullSizeImageUri
 
             val finalFile = File(getRealPathFromURI(tempUri))
 
@@ -198,19 +247,32 @@ class CameraActivity : AppCompatActivity() {
 
     private fun dispatchTakePictureIntent() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(this, "An error occurred, please try again", Toast.LENGTH_SHORT).show()
+        if (cameraIntent.resolveActivity(packageManager) != null) {
+            val photoFile: File? = try {
+                createImageFile()
+            } catch (ex: IOException) {
+                Log.e("CameraActivity", "Error occurred while creating the image file", ex)
+                null
+            }
+            photoFile?.also {
+                val photoURI: Uri = FileProvider.getUriForFile(
+                    this,
+                    "com.example.fyp_mobile.fileprovider",
+                    it
+                )
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
+            }
         }
     }
 
+
     private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
         val filesDir = inContext.filesDir
-        val imageFile = File(filesDir, "tempImage.jpg")
+        val imageFile = File(filesDir, "tempImage.png")
 
         val outputStream = FileOutputStream(imageFile)
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        inImage.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         outputStream.close()
 
         return Uri.fromFile(imageFile)
