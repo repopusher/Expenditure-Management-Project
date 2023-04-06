@@ -23,5 +23,6 @@
 
     <color name="gradient_start">#FF9800</color>
     <color name="gradient_end">#FF5722</color>
+    <color name="your_button_disabled_color">#BDBDBD</color>
 
 </resources>

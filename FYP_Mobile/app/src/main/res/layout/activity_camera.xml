@@ -17,10 +17,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/captureButton"
+        app:layout_constraintBottom_toTopOf="@id/categorySpinner"
         app:layout_constraintVertical_bias="0.5"
         android:src="@drawable/reciept"
         android:scaleType="centerCrop" />
+
+    <Spinner
+        android:id="@+id/categorySpinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/spinner_background"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/captureButton"
+        android:layout_margin="8dp" />
 
 
     <Button
@@ -30,7 +41,7 @@
         android:text="@string/app_capture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/confirmButton"
-        app:layout_constraintTop_toBottomOf="@id/imageView"
+        app:layout_constraintTop_toBottomOf="@id/categorySpinner"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="8dp"
         android:backgroundTint="@color/colorPrimary"
@@ -43,7 +54,7 @@
         android:text="@string/app_confirm"
         app:layout_constraintStart_toEndOf="@id/captureButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageView"
+        app:layout_constraintTop_toBottomOf="@id/categorySpinner"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="8dp"
         android:backgroundTint="@color/colorPrimary"

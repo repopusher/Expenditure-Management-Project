@@ -16,10 +16,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.Images
 import android.util.Log
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -51,6 +48,9 @@ class CameraActivity : AppCompatActivity() {
     private lateinit var database: DatabaseReference
     private var uri: Uri? = null
     private lateinit var fullSizeImageUri: Uri
+    private lateinit var categorySpinner: Spinner
+    private lateinit var selectedCategory: String
+    private lateinit var receiptId: String
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +61,10 @@ class CameraActivity : AppCompatActivity() {
         confirmButton = findViewById(R.id.confirmButton)
         imageView = findViewById(R.id.imageView)
         auth = FirebaseAuth.getInstance()
+        categorySpinner = findViewById(R.id.categorySpinner)
+        val categories = arrayOf("Groceries", "Transport", "Utilities", "Other")
+        val adapter = ArrayAdapter(this, R.layout.spinner_item, categories)
+        categorySpinner.adapter = adapter
 
         getPermissions()
 
@@ -71,6 +75,8 @@ class CameraActivity : AppCompatActivity() {
 
         confirmButton.setOnClickListener {
             if (uri != null) {
+                selectedCategory = categorySpinner.selectedItem.toString()
+                receiptId = UUID.randomUUID().toString()
                 uploadImage(uri!!)
             } else {
                 Toast.makeText(this, "No image to upload", Toast.LENGTH_SHORT).show()
@@ -122,11 +128,11 @@ class CameraActivity : AppCompatActivity() {
         val client = OkHttpClient()
 
         val json = "application/json; charset=utf-8".toMediaTypeOrNull()
-        val jsonString = "{\"image_path\": \"$imagePath\", \"user_id\": \"$userId\"}"
+        val jsonString = "{\"image_path\": \"$imagePath\", \"user_id\": \"$userId\", \"category\": \"$selectedCategory\", \"id\": \"$receiptId\"}"
         val requestBody = jsonString.toRequestBody(json)
 
         val request = Request.Builder()
-            .url("https://6f2b-213-133-66-102.eu.ngrok.io/process_image") //Change every time you rehost on ngrok
+            .url(" https://b4fb-213-133-66-102.eu.ngrok.io/process_image") //Change every time you rehost on ngrok
             .post(requestBody)
             .build()
 
